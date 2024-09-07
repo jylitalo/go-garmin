@@ -1,0 +1,4 @@
+[*.go]
+lsp_gopls_disabled = no
+go_build_tags = functional,ci
+go_build_flags = -trimpath -ldflags "-w -s"
