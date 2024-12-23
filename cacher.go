@@ -115,16 +115,16 @@ func (ftc *FileTokenCacher) GetOAuth1Token() (*OAuth1Token, error) {
 	return &token, ftc.mem.SaveOAuth1Token(&token)
 }
 
-func (ftc *FileTokenCacher) DelAccessToken() (err error) {
-	if err = ftc.mem.DelAccessToken(); err != nil {
-		return
+func (ftc *FileTokenCacher) DelAccessToken() error {
+	if err := ftc.mem.DelAccessToken(); err != nil {
+		return err
 	}
 	return os.Remove(filepath.Join(ftc.Path, "oauth1_token.json"))
 }
 
-func (ftc *FileTokenCacher) DelOAuth1Token() (err error) {
-	if err = ftc.mem.DelOAuth1Token(); err != nil {
-		return
+func (ftc *FileTokenCacher) DelOAuth1Token() error {
+	if err := ftc.mem.DelOAuth1Token(); err != nil {
+		return err
 	}
 	return os.Remove(filepath.Join(ftc.Path, "oauth1_token.json"))
 }
@@ -132,8 +132,7 @@ func (ftc *FileTokenCacher) DelOAuth1Token() (err error) {
 func (ftc *FileTokenCacher) save(name string, token any) error {
 	_, err := os.Stat(ftc.Path)
 	if os.IsNotExist(err) {
-		err = os.MkdirAll(ftc.Path, 0750)
-		if err != nil {
+		if err = os.MkdirAll(ftc.Path, 0750); err != nil {
 			return err
 		}
 	}
@@ -171,8 +170,7 @@ func (ftc *FileTokenCacher) get(name string, token any) error {
 	if err != nil {
 		return err
 	}
-	err = json.Unmarshal(b, token)
-	return err
+	return json.Unmarshal(b, token)
 }
 
 func getCachedPair(cacher TokenCacher) (*oauth1.Token, *AccessToken, error) {
@@ -181,8 +179,5 @@ func getCachedPair(cacher TokenCacher) (*oauth1.Token, *AccessToken, error) {
 		return nil, nil, err
 	}
 	at, err := cacher.GetAccessToken()
-	if err != nil {
-		return ot, nil, err
-	}
-	return ot, at, nil
+	return ot, at, err
 }
