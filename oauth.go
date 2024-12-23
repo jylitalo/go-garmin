@@ -368,7 +368,7 @@ func apiRefresh(client *Client, token *AccessToken) (*AccessToken, error) {
 	now := client.Clock.Now()
 	defer res.Body.Close()
 	if res.StatusCode != http.StatusCreated {
-		return nil, errors.New(fmt.Sprintf("bad status code %q, wanted 201", res.Status))
+		return nil, fmt.Errorf("bad status code %q, wanted 201", res.Status)
 	}
 	var at AccessToken
 	err = at.marshal(res.Body, now)
