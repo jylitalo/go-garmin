@@ -167,8 +167,7 @@ func (oc *oauthClient) getCSRF() error {
 		return err
 	}
 	if _, err = io.Copy(&oc.buf, res.Body); err != nil {
-		res.Body.Close()
-		return err
+		return errors.Join(err, res.Body.Close())
 	}
 	if err = res.Body.Close(); err != nil {
 		return err
