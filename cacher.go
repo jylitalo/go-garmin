@@ -136,7 +136,7 @@ func (ftc *FileTokenCacher) DelOAuth1Token() (err error) {
 func (ftc *FileTokenCacher) save(name string, token any) error {
 	_, err := os.Stat(ftc.Path)
 	if os.IsNotExist(err) {
-		err = os.MkdirAll(ftc.Path, 0755)
+		err = os.MkdirAll(ftc.Path, 0750)
 		if err != nil {
 			return err
 		}
