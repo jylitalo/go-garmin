@@ -142,7 +142,7 @@ func (ftc *FileTokenCacher) save(name string, token any) error {
 		}
 	}
 	f, err := os.OpenFile(
-		filepath.Join(ftc.Path, name),
+		filepath.Join(ftc.Path, filepath.Clean(name)),
 		os.O_TRUNC|os.O_CREATE|os.O_WRONLY,
 		0600,
 	)
@@ -160,7 +160,7 @@ func (ftc *FileTokenCacher) save(name string, token any) error {
 
 func (ftc *FileTokenCacher) get(name string, token any) error {
 	f, err := os.OpenFile(
-		filepath.Join(ftc.Path, name),
+		filepath.Join(ftc.Path, filepath.Clean(name)),
 		os.O_RDONLY,
 		0600,
 	)
