@@ -13,7 +13,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/harrybrwn/go-garmin/internal/rt"
+	"github.com/jylitalo/go-garmin/internal/rt"
 )
 
 func TestParsers(t *testing.T) {

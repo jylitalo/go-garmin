@@ -10,7 +10,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/harrybrwn/go-garmin/internal/rt"
+	"github.com/jylitalo/go-garmin/internal/rt"
 )
 
 var (

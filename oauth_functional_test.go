@@ -11,7 +11,7 @@ import (
 
 	"github.com/dghubble/oauth1"
 
-	"github.com/harrybrwn/go-garmin/internal/rt"
+	"github.com/jylitalo/go-garmin/internal/rt"
 )
 
 func TestFunctional(t *testing.T) {
