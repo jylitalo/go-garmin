@@ -176,7 +176,9 @@ func (c *Client) apiGet(out any, path string, params url.Values) error {
 	}
 	defer res.Body.Close()
 	if res.StatusCode != http.StatusOK {
-		return fmt.Errorf("received bad status code: %#v", res)
+		buf := new(bytes.Buffer)
+		buf.ReadFrom(res.Body)
+		return fmt.Errorf("received bad status code: %d, body: %s", res.StatusCode, string(buf.Bytes()))
 	}
 	return json.NewDecoder(res.Body).Decode(out)
 }
