@@ -28,7 +28,9 @@ checking the raw json responses to make sure that the structs are complete.
 
 # Other Notes
 
-Download the Garmin Fit SDK from [here](https://developer.garmin.com/fit/overview/).
+Download the Garmin Fit SDK from
+[here](https://developer.garmin.com/fit/overview/). The architecture is loosely
+based on githubs golang api client library.
 
 # TODO
 
