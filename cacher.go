@@ -3,6 +3,7 @@ package garmin
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -71,16 +72,17 @@ func (imtc *InMemTokenCacher) DelOAuth1Token() error {
 }
 
 func NewFileTokenCacher(p string) *FileTokenCacher {
-	return &FileTokenCacher{Path: p}
+	return &FileTokenCacher{Path: p, Prefix: ""}
 }
 
 type FileTokenCacher struct {
-	Path string
-	mem  InMemTokenCacher
+	Path   string
+	Prefix string
+	mem    InMemTokenCacher
 }
 
 func (ftc *FileTokenCacher) SaveAccessToken(at *AccessToken) error {
-	if err := ftc.save("access_token.json", at); err != nil {
+	if err := ftc.save(fmt.Sprintf("%saccess_token.json", ftc.Prefix), at); err != nil {
 		return err
 	}
 	return ftc.mem.SaveAccessToken(at)
@@ -91,14 +93,14 @@ func (ftc *FileTokenCacher) GetAccessToken() (*AccessToken, error) {
 	if t, err := ftc.mem.GetAccessToken(); err == nil && t != nil {
 		return t, nil
 	}
-	if err := ftc.get("access_token.json", &at); err != nil {
+	if err := ftc.get(fmt.Sprintf("%saccess_token.json", ftc.Prefix), &at); err != nil {
 		return &at, err
 	}
 	return &at, ftc.mem.SaveAccessToken(&at)
 }
 
 func (ftc *FileTokenCacher) SaveOAuth1Token(token *OAuth1Token) error {
-	if err := ftc.save("oauth1_token.json", token); err != nil {
+	if err := ftc.save(fmt.Sprintf("%soauth1_token.json", ftc.Prefix), token); err != nil {
 		return err
 	}
 	return ftc.mem.SaveOAuth1Token(token)
@@ -109,7 +111,7 @@ func (ftc *FileTokenCacher) GetOAuth1Token() (*OAuth1Token, error) {
 	if t, err := ftc.mem.GetOAuth1Token(); err == nil && t != nil {
 		return t, nil
 	}
-	if err := ftc.get("oauth1_token.json", &token); err != nil {
+	if err := ftc.get(fmt.Sprintf("%soauth1_token.json", ftc.Prefix), &token); err != nil {
 		return &token, err
 	}
 	return &token, ftc.mem.SaveOAuth1Token(&token)
@@ -119,14 +121,14 @@ func (ftc *FileTokenCacher) DelAccessToken() error {
 	if err := ftc.mem.DelAccessToken(); err != nil {
 		return err
 	}
-	return os.Remove(filepath.Join(ftc.Path, "oauth1_token.json"))
+	return os.Remove(filepath.Join(ftc.Path, fmt.Sprintf("%soauth1_token.json", ftc.Prefix)))
 }
 
 func (ftc *FileTokenCacher) DelOAuth1Token() error {
 	if err := ftc.mem.DelOAuth1Token(); err != nil {
 		return err
 	}
-	return os.Remove(filepath.Join(ftc.Path, "oauth1_token.json"))
+	return os.Remove(filepath.Join(ftc.Path, fmt.Sprintf("%soauth1_token.json", ftc.Prefix)))
 }
 
 func (ftc *FileTokenCacher) save(name string, token any) error {

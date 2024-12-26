@@ -340,12 +340,27 @@ func (usu *UserSettingsUpdate) Gender(g string) *UserSettingsUpdate {
 	return usu
 }
 
+// LeftHanded sets the request to update user settings to be left handed.
+func (usu *UserSettingsUpdate) LeftHanded() *UserSettingsUpdate { return usu.hand("LEFT") }
+
+// RightHanded sets the request to update user settings to be right handed.
+func (usu *UserSettingsUpdate) RightHanded() *UserSettingsUpdate { return usu.hand("RIGHT") }
+
+func (usu *UserSettingsUpdate) hand(hand string) *UserSettingsUpdate {
+	if usu.UserData == nil {
+		usu.UserData = new(UserDataUpdate)
+	}
+	usu.UserData.Handedness = &hand
+	return usu
+}
+
 type UserDataUpdate struct {
 	Gender *string `json:"gender,omitempty"`
 	// Weight in grams.
 	Weight *float64 `json:"weight,omitempty"`
 	// Height in centimeters.
-	Height *float64 `json:"height,omitempty"`
+	Height     *float64 `json:"height,omitempty"`
+	Handedness *string  `json:"handedness,omitempty"`
 }
 
 // UpdateSettings will send a partial user settings object with only the fields

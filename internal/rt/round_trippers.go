@@ -69,14 +69,14 @@ func (d *Debugger) RoundTrip(req *http.Request) (*http.Response, error) {
 	r := res.Request
 	id := slog.Int("id", d.count)
 	slog.Debug("START")
-	slog.Debug("Send", id, slog.String("method", r.Method), slog.String("url", r.URL.String()))
+	slog.Info("Send", id, slog.String("method", r.Method), slog.String("url", r.URL.String()))
 	for k, v := range r.Header {
 		slog.Debug("request header", slog.String(k, strings.Join(v, ", ")))
 	}
 	if !d.SkipBody && reqbody.Len() > 0 {
 		slog.Debug("request body", slog.String("body", reqbody.String()))
 	}
-	slog.Debug("Receive", id, slog.String("status", res.Status))
+	slog.Info("Receive", id, slog.String("status", res.Status))
 	for k, v := range res.Header {
 		slog.Debug("response header", slog.String(k, strings.Join(v, ", ")))
 	}

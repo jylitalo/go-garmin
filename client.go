@@ -104,6 +104,13 @@ func WithCookieOpts(opts *cookiejar.Options) ClientOpt {
 
 func WithClock(clock Clock) ClientOpt { return func(co *clientOpts) { co.Clock = clock } }
 
+func WithDebugging(enabled, skipBody bool) ClientOpt {
+	if !enabled {
+		return func(co *clientOpts) {}
+	}
+	return WithTransport(&rt.Debugger{SkipBody: skipBody})
+}
+
 // Login will get an access token and auto authenticate every request sent by
 // the client.
 func (c *Client) Login(email, password string) error {

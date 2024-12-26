@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	cacher   = NewFileTokenCacher(filepath.Join(os.TempDir(), "go-garmin-tests"))
+	cacher   = NewFileTokenCacher(filepath.Join(os.TempDir(), "go-garmin-tests", "test"))
 	debugger = &rt.Debugger{SkipBody: true}
 )
 
