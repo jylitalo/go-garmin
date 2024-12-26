@@ -106,18 +106,12 @@ func login(client *Client, username, password string) (*oauth1.Token, *AccessTok
 	)
 	if client.Cacher != nil {
 		ot, at, err := getCachedPair(client.Cacher)
-		if err != nil {
-			goto sendLogin
+		if err == nil && !at.expired() {
+			return ot, at, nil
 		}
-		if at.expired() {
-			goto sendLogin
-		}
-		return ot, at, nil
 	}
 
-sendLogin:
-	err = oc.getCSRF()
-	if err != nil {
+	if err = oc.getCSRF(); err != nil {
 		return nil, nil, err
 	}
 	ticket, err := oc.signin(username, password)
@@ -141,12 +135,10 @@ sendLogin:
 		return nil, nil, err
 	}
 	if client.Cacher != nil {
-		err = client.Cacher.SaveOAuth1Token(token)
-		if err != nil {
+		if err = client.Cacher.SaveOAuth1Token(token); err != nil {
 			return token, accessToken, err
 		}
-		err = client.Cacher.SaveAccessToken(accessToken)
-		if err != nil {
+		if err = client.Cacher.SaveAccessToken(accessToken); err != nil {
 			return token, accessToken, err
 		}
 	}
@@ -166,18 +158,12 @@ func (oc *oauthClient) getCSRF() error {
 	if err != nil {
 		return err
 	}
-	if _, err = io.Copy(&oc.buf, res.Body); err != nil {
-		res.Body.Close()
-		return err
-	}
-	if err = res.Body.Close(); err != nil {
+	_, err = io.Copy(&oc.buf, res.Body)
+	if err = errors.Join(err, res.Body.Close()); err != nil {
 		return err
 	}
 	oc.csrf, err = findCSRF(oc.buf.Bytes())
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }
 
 func (oc *oauthClient) signin(username, password string) (ticket string, err error) {
@@ -371,8 +357,7 @@ func apiRefresh(client *Client, token *AccessToken) (*AccessToken, error) {
 		return nil, errors.New(fmt.Sprintf("bad status code %q, wanted 201", res.Status))
 	}
 	var at AccessToken
-	err = at.marshal(res.Body, now)
-	if err != nil {
+	if err = at.marshal(res.Body, now); err != nil {
 		return nil, err
 	}
 	return &at, nil
@@ -439,12 +424,10 @@ func (otr *oauth1TokenRefresher) Refresh(*AccessToken) (*AccessToken, error) {
 		return nil, err
 	}
 	if otr.client.Cacher != nil {
-		err = otr.client.Cacher.SaveOAuth1Token(otr.token)
-		if err != nil {
+		if err = otr.client.Cacher.SaveOAuth1Token(otr.token); err != nil {
 			return accessToken, err
 		}
-		err = otr.client.Cacher.SaveAccessToken(accessToken)
-		if err != nil {
+		if err = otr.client.Cacher.SaveAccessToken(accessToken); err != nil {
 			return accessToken, err
 		}
 	}
