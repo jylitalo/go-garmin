@@ -175,6 +175,9 @@ func (c *Client) apiGet(out any, path string, params url.Values) error {
 		return err
 	}
 	defer res.Body.Close()
+	if res.StatusCode == http.StatusNoContent {
+		return nil
+	}
 	if res.StatusCode != http.StatusOK {
 		return fmt.Errorf("recived bad status code %q", res.Status)
 	}
