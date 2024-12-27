@@ -182,6 +182,9 @@ func (c *Client) apiGet(out any, path string, params url.Values) error {
 		return err
 	}
 	defer res.Body.Close()
+	if res.StatusCode == http.StatusNoContent {
+		return nil
+	}
 	if res.StatusCode != http.StatusOK {
 		buf := new(bytes.Buffer)
 		_, _ = buf.ReadFrom(res.Body)
