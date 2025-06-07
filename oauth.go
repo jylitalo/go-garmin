@@ -458,7 +458,7 @@ func findCSRF(b []byte) (string, error) {
 func findTitle(b []byte) (string, error) {
 	idx := titleRe.FindSubmatchIndex(b)
 	if len(idx) < 4 {
-		return "", ErrNoTitle
+		return "", fmt.Errorf("findTitle: %w from %s", ErrNoTitle, string(b))
 	}
 	// index the first match group
 	return string(b[idx[2]:idx[3]]), nil
@@ -467,7 +467,7 @@ func findTitle(b []byte) (string, error) {
 func parseTicket(b []byte) (string, error) {
 	idx := ticketRe.FindSubmatchIndex(b)
 	if len(idx) < 4 {
-		return "", ErrNoTitle
+		return "", fmt.Errorf("parseTicket: %w from %s", ErrNoTitle, string(b))
 	}
 	// index the first match group
 	return string(b[idx[2]:idx[3]]), nil
